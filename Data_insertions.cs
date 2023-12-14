@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -12,16 +11,17 @@ public class DataInsertion
 {
     public async Task InsertData()
     {
+        
         string dbUri = "Host=localhost;Port=5455;Username=postgres;Password=postgres;Database=idcgrupp4";
 
         await using var db = NpgsqlDataSource.Create(dbUri);
 
 
 
-        /*
+        
         
                 await using (var cmd = db.CreateCommand(@"
-        INSERT INTO hotel (name, distance_to_beach, distance_to_centrum) VALUES
+            INSERT INTO hotel (name, distance_to_beach, distance_to_centrum) VALUES
             ('Seaside Paradise', 50, 5),
             ('City Center Oasis', 20, 0),
             ('Tranquil Retreat', 100, 10),
@@ -34,7 +34,7 @@ public class DataInsertion
         
         
         await using (var cmd = db.CreateCommand(@"
- INSERT INTO room (number, size, available, hotel_number) VALUES 
+INSERT INTO room (number, size, available, hotel_number) VALUES 
 (1, 'S', true, 1), (2, 'M', true, 1), (3, 'L', true, 1), 
 (4, 'S', true, 1), (5, 'M', true, 1), (6, 'L', true, 1), 
 (7, 'S', true, 1), (8, 'M', true, 1), (9, 'L', true, 1), 
@@ -91,7 +91,7 @@ public class DataInsertion
             await cmd.ExecuteNonQueryAsync();
         };
         
-        */
+        
 
         await using (var cmd = db.CreateCommand(@"
 insert into customer (id, name, surname, email, phone_number, date_of_birth) values (1, 'Ashien', 'D''Alesco', 'adalesco0@accuweather.com', '+967 (893) 162-9630', '8/19/1959');
@@ -251,11 +251,10 @@ insert into customer (id, name, surname, email, phone_number, date_of_birth) val
         {
             await cmd.ExecuteNonQueryAsync();
         }
-
+        
 
     }
 
 
 
 }
-
