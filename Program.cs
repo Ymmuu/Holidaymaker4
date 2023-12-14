@@ -7,6 +7,9 @@ bool menu = true;
 
 Table create = new Table();
 create.CreateTable();
+DataInsertion insertion = new DataInsertion();
+await insertion.InsertData();
+
 
 
 while (menu)
@@ -39,6 +42,7 @@ while (menu)
             Console.Clear();
             Console.WriteLine("Bye :)");
             menu = false;
+
             break;
         default:
             Console.WriteLine("Invalid choice");
