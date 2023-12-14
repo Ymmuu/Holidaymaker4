@@ -18,7 +18,7 @@ public class Table
 
 
 
-        /*
+        
         // Drop the tables with CASCADE
         await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS room CASCADE"))
         {
@@ -39,7 +39,7 @@ public class Table
         {
             await cmd.ExecuteNonQueryAsync();
         }
-        */
+        
 
 
         await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS customer (id SERIAL PRIMARY KEY, name VARCHAR, surname VARCHAR, email VARCHAR, phone_number VARCHAR, date_of_birth DATE)"))
@@ -58,7 +58,7 @@ public class Table
             await cmd.ExecuteNonQueryAsync();
         }
 
-        await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS room (number INT, size VARCHAR, available BOOL, hotel_number INT)"))
+        await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS room (number INT, size VARCHAR, available BOOL, hotel_number INT, PRIMARY KEY (number, hotel_number))"))
         {
             await cmd.ExecuteNonQueryAsync();
         }
