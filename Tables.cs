@@ -17,8 +17,8 @@ public class Table
         await using var db = NpgsqlDataSource.Create(dbUri);
 
 
-
-        
+        /*
+       
         // Drop the tables with CASCADE
         await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS room CASCADE"))
         {
@@ -39,8 +39,8 @@ public class Table
         {
             await cmd.ExecuteNonQueryAsync();
         }
+        */
         
-
 
         await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS customer (id SERIAL PRIMARY KEY, name VARCHAR, surname VARCHAR, email VARCHAR, phone_number VARCHAR, date_of_birth DATE)"))
         {

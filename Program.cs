@@ -7,8 +7,8 @@ bool menu = true;
 
 Table create = new Table();
 create.CreateTable();
-//DataInsertion insertion = new DataInsertion();
-//await insertion.InsertData();
+DataInsertion insertion = new DataInsertion();
+await insertion.InsertData();
 
 
 
