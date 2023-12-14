@@ -259,4 +259,3 @@ insert into customer (id, name, surname, email, phone_number, date_of_birth) val
 
 }
 
-
