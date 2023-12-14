@@ -19,7 +19,7 @@ public class DataInsertion
 
 
         
-        
+        /*
                 await using (var cmd = db.CreateCommand(@"
             INSERT INTO hotel (name, distance_to_beach, distance_to_centrum) VALUES
             ('Seaside Paradise', 50, 5),
@@ -252,7 +252,7 @@ insert into customer (id, name, surname, email, phone_number, date_of_birth) val
             await cmd.ExecuteNonQueryAsync();
         }
         
-
+        */
     }
 
 

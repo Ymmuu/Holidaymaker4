@@ -46,6 +46,17 @@ public class Booking
         Console.WriteLine("Write your date of birth (YYYY-MM-DD): ");
         DateOnly.TryParse(Console.ReadLine(), out DateOnly dateOfBirth);
 
+        Console.Clear();
+        Console.WriteLine("How many people are looking to rent a room?");
+        int customerNumber = Console.ReadLine();
+
+        Console.Clear();
+        Console.WriteLine("What date do you want to check in?");
+        DateOnly.TryParse(Console.ReadLine(), out DateOnly checkIn);
+
+        Console.Clear();
+        Console.WriteLine("What date do you want to check out?");
+        DateOnly.TryParse(Console.ReadLine(), out DateOnly checkOut);
 
 
         Console.WriteLine("Added you as a customer, welcome!");
@@ -62,6 +73,8 @@ public class Booking
 
             await cmd.ExecuteNonQueryAsync();
         }
+
+        
 
 
         /*
@@ -81,5 +94,17 @@ public class Booking
     }
 
 
+
+    public async Task AddBooking()
+    {
+        string dbUri = "Host=localhost;Port=5455;Username=postgres;Password=postgres;Database=idcgrupp4";
+
+        await using var db = NpgsqlDataSource.Create(dbUri);
+
+        await using (var cmd = db.CreateCommand())
+        {
+            const string query = "SELECT hotel_name FROM hotel";
+        }
+    }
 
 }
