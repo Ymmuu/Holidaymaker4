@@ -1,11 +1,27 @@
 ﻿using Npgsql;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 using System.Text.RegularExpressions;
 namespace idcgrupp4;
 
 public class Booking
-{
-    public async Task AddCustomer()
+{  
+    public DateOnly CheckDate()
+    {
+        string choosenDate = Console.ReadLine();
+        DateOnly choosenDateCorrected;   
+        while (!DateOnly.TryParseExact(choosenDate, "yyyy-mm-dd",
+                                                        CultureInfo.InvariantCulture,
+                                                        DateTimeStyles.None,
+                                                        out choosenDateCorrected))
+        {
+            Console.WriteLine("Not Valid Format");
+            choosenDate = Console.ReadLine();
+        }
+        return choosenDateCorrected;
+    }
+        
+public async Task AddCustomer()
     {
         string dbUri = "Host=localhost;Port=5455;Username=postgres;Password=postgres;Database=idcgrupp4";
 
@@ -42,21 +58,17 @@ public class Booking
             phoneNumber = Console.ReadLine();
         }
 
+
+
         Console.Clear();
         Console.WriteLine("Write your date of birth (YYYY-MM-DD): ");
-        DateOnly.TryParse(Console.ReadLine(), out DateOnly dateOfBirth);
+        //call function tryparse date
+        DateOnly dateOfBirth = CheckDate();
+        
 
         Console.Clear();
-        Console.WriteLine("How many people are looking to rent a room?");
-        int customerNumber = Console.ReadLine();
 
-        Console.Clear();
-        Console.WriteLine("What date do you want to check in?");
-        DateOnly.TryParse(Console.ReadLine(), out DateOnly checkIn);
-
-        Console.Clear();
-        Console.WriteLine("What date do you want to check out?");
-        DateOnly.TryParse(Console.ReadLine(), out DateOnly checkOut);
+        
 
 
         Console.WriteLine("Added you as a customer, welcome!");
@@ -74,21 +86,6 @@ public class Booking
             await cmd.ExecuteNonQueryAsync();
         }
 
-        
-
-
-        /*
-        static bool IsValidDateFormat(string input)
-        {
-            // Use regular expression to match the format YYYY-MM-DD
-            string pattern = @"\d{4}-\d{2}-\d{2}$";
-
-            return Regex.IsMatch(input, pattern);
-        }
-        */
-
-
-
 
 
     }
@@ -101,10 +98,46 @@ public class Booking
 
         await using var db = NpgsqlDataSource.Create(dbUri);
 
+
+
+        Console.Clear();
+        Console.WriteLine("What date do you want to check in?");
+        DateOnly checkIn = CheckDate();
+
+        Console.Clear();
+        Console.WriteLine("What date do you want to check out?");
+        DateOnly checkOut = CheckDate();
+
+
+        Console.WriteLine("How many people are looking to rent a room?");
+        int amountOfPeople;
+        string amountOfPeopleString = Console.ReadLine();
+        while (!int.TryParse(amountOfPeopleString, out amountOfPeople))
+        {
+            Console.WriteLine("Invalid format");
+            amountOfPeopleString = Console.ReadLine();
+        }
+
+        string insertQuery = "INSERT INTO customer(check_in, check_out, amount_of_people) VALUES ($1, $2, $3, $4, $5)";
+
+        await using (var cmd = db.CreateCommand(insertQuery))
+        {
+            cmd.Parameters.AddWithValue(checkIn);
+            cmd.Parameters.AddWithValue(checkOut);
+            cmd.Parameters.AddWithValue(amountOfPeople);
+            
+
+            await cmd.ExecuteNonQueryAsync();
+        }
+
         await using (var cmd = db.CreateCommand())
         {
             const string query = "SELECT hotel_name FROM hotel";
         }
     }
 
-}
+
+    }
+
+
+
