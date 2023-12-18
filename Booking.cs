@@ -1,4 +1,5 @@
 ﻿using Npgsql;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Runtime;
@@ -74,7 +75,7 @@ public async Task AddCustomer()
         
 
 
-        Console.WriteLine("Added you as a customer, welcome!");
+        Console.WriteLine("Added " + firstName + " " + lastName + " as a customer, welcome!");
 
         string insertQuery = "INSERT INTO customer(name, surname, email, phone_number, date_of_birth) VALUES ($1, $2, $3, $4, $5)";
 
@@ -101,12 +102,6 @@ public async Task AddCustomer()
         string dbUri = "Host =localhost;Port=5455;Username=postgres;Password=postgres;Database=idcgrupp4";
 
         await using var db = NpgsqlDataSource.Create(dbUri);
-
-        
-
-        Console.Clear();
-        
-
 
         Console.Clear();
         Console.WriteLine("What date do you want to check in?");
@@ -148,6 +143,7 @@ public async Task AddCustomer()
                     Console.WriteLine("7. Helpension");
                     Console.WriteLine("8. Klar");
                     string amenetieChoice = Console.ReadLine();
+                    // if time make so just 1 extra dosent have ,
                     switch (amenetieChoice)
                     {
                         case "1":
@@ -189,33 +185,51 @@ public async Task AddCustomer()
             case "2":
                 break;
         }
+/*
+        string LastestCustomer = "INSERT INTO booking(customer) SELECT MAX(ID) FROM Customer";
+        await using (var cmd = db.CreateCommand(LastestCustomer))
+        {
+            await cmd.ExecuteNonQueryAsync();
+        }
+        Console.WriteLine(checkIn);
+        Console.WriteLine(checkOut);
+        Console.WriteLine(amountOfPeople);
+        Console.WriteLine(extras);
+*/
 
-        string Result = string.Empty;
-        const string LastestCustomer = "SELECT MAX(ID) FROM Customer";
-        var Latest = await db.CreateCommand(LastestCustomer).ExecuteReaderAsync();
-        Result += Latest.GetInt32(0);
 
 
 
-        string insertQuery = "INSERT INTO booking(customer, check_in, check_out, amount_of_people, extras_ameneties, is_deleted) VALUES ($1, $2, $3, $4, $5, $6)";
+        string result = string.Empty;
+
+        const string query = "SELECT MAX(ID) FROM Customer";
+        var reader = await db.CreateCommand(query).ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            result += reader.GetInt32(0);
+            
+        }
+        int latest = int.Parse(result);
+
+
+
+
+        string insertQuery = "INSERT INTO booking(customer, check_in, check_out, amount_of_people, extra_amenities, is_deleted) VALUES ($1, $2, $3, $4, $5, $6)";
 
         await using (var cmd = db.CreateCommand(insertQuery))
         {
-            cmd.Parameters.AddWithValue(Result);
+            cmd.Parameters.AddWithValue(latest);
             cmd.Parameters.AddWithValue(checkIn);
             cmd.Parameters.AddWithValue(checkOut);
             cmd.Parameters.AddWithValue(amountOfPeople);
             cmd.Parameters.AddWithValue(extras);
-            cmd.Parameters.AddWithValue(true);
+            cmd.Parameters.AddWithValue(false);
             
 
             await cmd.ExecuteNonQueryAsync();
         }
 
-        await using (var cmd = db.CreateCommand())
-        {
-            const string query = "SELECT hotel_name FROM hotel";
-        }
     }
 
 
