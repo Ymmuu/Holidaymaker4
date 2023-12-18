@@ -1,11 +1,31 @@
 ﻿using Npgsql;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
+using System.Runtime;
+using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.RegularExpressions;
 namespace idcgrupp4;
 
 public class Booking
-{
-    public async Task AddCustomer()
+{ 
+    public DateOnly CheckDate()
+    {
+        string choosenDate = Console.ReadLine();
+        DateOnly choosenDateCorrected;   
+        while (!DateOnly.TryParseExact(choosenDate, "yyyy-mm-dd",
+                                                        CultureInfo.InvariantCulture,
+                                                        DateTimeStyles.None,
+                                                        out choosenDateCorrected))
+        {
+            Console.WriteLine("Not Valid Format");
+            choosenDate = Console.ReadLine();
+        }
+        return choosenDateCorrected;
+    }
+        
+public async Task AddCustomer()
     {
         string dbUri = "Host=localhost;Port=5455;Username=postgres;Password=postgres;Database=idcgrupp4";
 
@@ -42,13 +62,20 @@ public class Booking
             phoneNumber = Console.ReadLine();
         }
 
+
+
         Console.Clear();
         Console.WriteLine("Write your date of birth (YYYY-MM-DD): ");
-        DateOnly.TryParse(Console.ReadLine(), out DateOnly dateOfBirth);
+        //call function tryparse date
+        DateOnly dateOfBirth = CheckDate();
+        
+
+        Console.Clear();
+
+        
 
 
-
-        Console.WriteLine("Added you as a customer, welcome!");
+        Console.WriteLine("Added " + firstName + " " + lastName + " as a customer, welcome!");
 
         string insertQuery = "INSERT INTO customer(name, surname, email, phone_number, date_of_birth) VALUES ($1, $2, $3, $4, $5)";
 
@@ -63,23 +90,150 @@ public class Booking
             await cmd.ExecuteNonQueryAsync();
         }
 
+        
 
-        /*
-        static bool IsValidDateFormat(string input)
+
+    }
+
+
+    
+    public async Task AddBooking()
+    {
+        string dbUri = "Host =localhost;Port=5455;Username=postgres;Password=postgres;Database=idcgrupp4";
+
+        await using var db = NpgsqlDataSource.Create(dbUri);
+
+        Console.Clear();
+        Console.WriteLine("What date do you want to check in?");
+        DateOnly checkIn = CheckDate();
+
+        Console.Clear();
+        Console.WriteLine("What date do you want to check out?");
+        DateOnly checkOut = CheckDate();
+
+
+        Console.WriteLine("How many people are looking to rent a room?");
+        int amountOfPeople;
+        string amountOfPeopleString = Console.ReadLine();
+        while (!int.TryParse(amountOfPeopleString, out amountOfPeople))
         {
-            // Use regular expression to match the format YYYY-MM-DD
-            string pattern = @"\d{4}-\d{2}-\d{2}$";
-
-            return Regex.IsMatch(input, pattern);
+            Console.WriteLine("Invalid format");
+            amountOfPeopleString = Console.ReadLine();
         }
-        */
+
+        
+        Console.WriteLine("Add extra ameneties?");
+        Console.WriteLine("1. Yes");
+        Console.WriteLine("2. No");
+        string choice = Console.ReadLine();
+        var ameneties = true;
+        string extras = string.Empty;
+        switch (choice)
+        {
+            case "1":
+                while (ameneties)
+                {
+                    Console.Clear();
+                    Console.WriteLine("1. Pool");
+                    Console.WriteLine("2. Kvällsunderhållning");
+                    Console.WriteLine("3. Barnklubb");
+                    Console.WriteLine("4. Restaurang");
+                    Console.WriteLine("5. Extrasäng");
+                    Console.WriteLine("6. Halvpension");
+                    Console.WriteLine("7. Helpension");
+                    Console.WriteLine("8. Klar");
+                    string amenetieChoice = Console.ReadLine();
+                    // if time make so just 1 extra dosent have ,
+                    switch (amenetieChoice)
+                    {
+                        case "1":
+                            extras += "Pool, ";
+                            break;
+
+                        case "2":
+                            extras += "Kvällsunderhållning, ";
+                            break;
+
+                        case "3":
+                            extras += "Barnklubb, ";
+                            break;
+
+                        case "4":
+                            extras += "Restaurang, ";
+                            break;
+
+                        case "5":
+                            extras += "Extrasäng, ";
+                            break;
+
+                        case "6":
+                            extras += "Halvpension, ";
+                            break;
+
+                        case "7":
+                            extras += "Helpension";
+                            break;
+
+                        case "8":
+                            ameneties = false;
+                            break;
+
+                    }
+                }
+                break;
+
+            case "2":
+                break;
+        }
+/*
+        string LastestCustomer = "INSERT INTO booking(customer) SELECT MAX(ID) FROM Customer";
+        await using (var cmd = db.CreateCommand(LastestCustomer))
+        {
+            await cmd.ExecuteNonQueryAsync();
+        }
+        Console.WriteLine(checkIn);
+        Console.WriteLine(checkOut);
+        Console.WriteLine(amountOfPeople);
+        Console.WriteLine(extras);
+*/
 
 
 
+
+        string result = string.Empty;
+
+        const string query = "SELECT MAX(ID) FROM Customer";
+        var reader = await db.CreateCommand(query).ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
+        {
+            result += reader.GetInt32(0);
+            
+        }
+        int latest = int.Parse(result);
+
+
+
+
+        string insertQuery = "INSERT INTO booking(customer, check_in, check_out, amount_of_people, extra_amenities, is_deleted) VALUES ($1, $2, $3, $4, $5, $6)";
+
+        await using (var cmd = db.CreateCommand(insertQuery))
+        {
+            cmd.Parameters.AddWithValue(latest);
+            cmd.Parameters.AddWithValue(checkIn);
+            cmd.Parameters.AddWithValue(checkOut);
+            cmd.Parameters.AddWithValue(amountOfPeople);
+            cmd.Parameters.AddWithValue(extras);
+            cmd.Parameters.AddWithValue(false);
+            
+
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+    }
 
 
     }
 
 
 
-}
