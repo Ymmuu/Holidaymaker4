@@ -96,6 +96,9 @@ public class Table
 
 
         await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS hotels_to_addons (id SERIAL PRIMARY KEY, hotel_number INT REFERENCES hotel(number), addon_id INT REFERENCES addons(id), price DECIMAL, UNIQUE (hotel_number, addon_id))"))
+        {
+            await cmd.ExecuteNonQueryAsync();
+        }
 
         await using (var cmd = db.CreateCommand("ALTER TABLE booking ADD CONSTRAINT fk_booking_room FOREIGN KEY (room_number) REFERENCES room(number)"))
 
