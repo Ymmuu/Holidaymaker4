@@ -1,4 +1,5 @@
-﻿using idcgrupp4;
+﻿using Holidaymaker4;
+using idcgrupp4;
 using Npgsql;
 using System.Threading.Channels;
 
@@ -32,8 +33,9 @@ while (menu)
 
             break;
         case "2":
-            Console.WriteLine("Remove booking");
-
+            Console.WriteLine("Search hotels");
+            Addon addons = new Addon();
+            addons.CreateView();
             Console.ReadKey();
             break;
         case "3":

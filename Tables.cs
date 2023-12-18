@@ -17,8 +17,10 @@ public class Table
         await using var db = NpgsqlDataSource.Create(dbUri);
 
 
+
       
        /*
+
         // Drop the tables with CASCADE
         await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS room CASCADE"))
         {
@@ -35,11 +37,21 @@ public class Table
             await cmd.ExecuteNonQueryAsync();
         }
 
+        await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS hotels_to_addons CASCADE"))
+        {
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS addons CASCADE"))
+        {
+            await cmd.ExecuteNonQueryAsync();
+        }
+
         await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS hotel CASCADE"))
         {
             await cmd.ExecuteNonQueryAsync();
         }
-        
+
         */
 
         await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS customer (id SERIAL PRIMARY KEY, name VARCHAR, surname VARCHAR, email VARCHAR, phone_number VARCHAR, date_of_birth DATE)"))
@@ -63,6 +75,9 @@ public class Table
             await cmd.ExecuteNonQueryAsync();
         }
 
+        
+        
+
 
         await using (var cmd = db.CreateCommand("ALTER TABLE hotel ADD CONSTRAINT hotel_number UNIQUE (number)"))
         {
@@ -74,8 +89,16 @@ public class Table
         {
             await cmd.ExecuteNonQueryAsync();
         }
+        await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS addons (id SERIAL PRIMARY KEY, label TEXT UNIQUE)"))
+        {
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+
+        await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS hotels_to_addons (id SERIAL PRIMARY KEY, hotel_number INT REFERENCES hotel(number), addon_id INT REFERENCES addons(id), price DECIMAL, UNIQUE (hotel_number, addon_id))"))
 
         await using (var cmd = db.CreateCommand("ALTER TABLE booking ADD CONSTRAINT fk_booking_room FOREIGN KEY (room_number) REFERENCES room(number)"))
+
         {
             await cmd.ExecuteNonQueryAsync();
         }
