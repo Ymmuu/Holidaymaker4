@@ -1,11 +1,14 @@
 ﻿using Npgsql;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
+using System.Runtime;
+using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.RegularExpressions;
 namespace idcgrupp4;
 
 public class Booking
-{  
+{ 
     public DateOnly CheckDate()
     {
         string choosenDate = Console.ReadLine();
@@ -86,18 +89,23 @@ public async Task AddCustomer()
             await cmd.ExecuteNonQueryAsync();
         }
 
+        
 
 
     }
 
 
-
+    
     public async Task AddBooking()
     {
-        string dbUri = "Host=localhost;Port=5455;Username=postgres;Password=postgres;Database=idcgrupp4";
+        string dbUri = "Host =localhost;Port=5455;Username=postgres;Password=postgres;Database=idcgrupp4";
 
         await using var db = NpgsqlDataSource.Create(dbUri);
 
+        
+
+        Console.Clear();
+        
 
 
         Console.Clear();
@@ -118,13 +126,87 @@ public async Task AddCustomer()
             amountOfPeopleString = Console.ReadLine();
         }
 
-        string insertQuery = "INSERT INTO customer(check_in, check_out, amount_of_people) VALUES ($1, $2, $3, $4, $5)";
+        
+        Console.WriteLine("Add extra ameneties?");
+        Console.WriteLine("1. Yes");
+        Console.WriteLine("2. No");
+        string choice = Console.ReadLine();
+        var ameneties = true;
+        string extras = string.Empty;
+        switch (choice)
+        {
+            case "1":
+                while (ameneties)
+                {
+                    Console.Clear();
+                    Console.WriteLine("1. Pool");
+                    Console.WriteLine("2. Kvällsunderhållning");
+                    Console.WriteLine("3. Barnklubb");
+                    Console.WriteLine("4. Restaurang");
+                    Console.WriteLine("5. Extrasäng");
+                    Console.WriteLine("6. Halvpension");
+                    Console.WriteLine("7. Helpension");
+                    Console.WriteLine("8. Klar");
+                    string amenetieChoice = Console.ReadLine();
+                    switch (amenetieChoice)
+                    {
+                        case "1":
+                            extras += "Pool, ";
+                            break;
+
+                        case "2":
+                            extras += "Kvällsunderhållning, ";
+                            break;
+
+                        case "3":
+                            extras += "Barnklubb, ";
+                            break;
+
+                        case "4":
+                            extras += "Restaurang, ";
+                            break;
+
+                        case "5":
+                            extras += "Extrasäng, ";
+                            break;
+
+                        case "6":
+                            extras += "Halvpension, ";
+                            break;
+
+                        case "7":
+                            extras += "Helpension";
+                            break;
+
+                        case "8":
+                            ameneties = false;
+                            break;
+
+                    }
+                }
+                break;
+
+            case "2":
+                break;
+        }
+
+        string Result = string.Empty;
+        const string LastestCustomer = "SELECT MAX(ID) FROM Customer";
+        var Latest = await db.CreateCommand(LastestCustomer).ExecuteReaderAsync();
+        Result += Latest.GetInt32(0);
+
+
+
+        string insertQuery = "INSERT INTO booking(customer, check_in, check_out, amount_of_people, extras_ameneties, is_deleted) VALUES ($1, $2, $3, $4, $5, $6)";
 
         await using (var cmd = db.CreateCommand(insertQuery))
         {
+            cmd.Parameters.AddWithValue(Result);
             cmd.Parameters.AddWithValue(checkIn);
             cmd.Parameters.AddWithValue(checkOut);
             cmd.Parameters.AddWithValue(amountOfPeople);
+            cmd.Parameters.AddWithValue(extras);
+            cmd.Parameters.AddWithValue(true);
             
 
             await cmd.ExecuteNonQueryAsync();

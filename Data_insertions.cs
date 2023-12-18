@@ -19,7 +19,7 @@ public class DataInsertion
 
 
         
-        /*
+        
                 await using (var cmd = db.CreateCommand(@"
             INSERT INTO hotel (name, distance_to_beach, distance_to_centrum) VALUES
             ('Seaside Paradise', 50, 5),
@@ -92,7 +92,7 @@ INSERT INTO room (number, size, available, hotel_number) VALUES
         };
         
         
-
+/*
         await using (var cmd = db.CreateCommand(@"
 insert into customer (id, name, surname, email, phone_number, date_of_birth) values (1, 'Ashien', 'D''Alesco', 'adalesco0@accuweather.com', '+967 (893) 162-9630', '8/19/1959');
 insert into customer (id, name, surname, email, phone_number, date_of_birth) values (2, 'Roxane', 'Ryle', 'rryle1@tripod.com', '+86 (179) 855-6611', '9/30/2005');
@@ -250,9 +250,9 @@ insert into customer (id, name, surname, email, phone_number, date_of_birth) val
 "))
         {
             await cmd.ExecuteNonQueryAsync();
-        }
+        }*/
         
-        */
+        
     }
 
 

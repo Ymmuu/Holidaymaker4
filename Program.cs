@@ -8,7 +8,7 @@ bool menu = true;
 Table create = new Table();
 create.CreateTable();
 DataInsertion insertion = new DataInsertion();
-await insertion.InsertData();
+//await insertion.InsertData();
 
 
 
@@ -28,6 +28,7 @@ while (menu)
         case "1":
             Booking booking = new Booking();
             booking.AddCustomer();
+            booking.AddBooking();
 
             break;
         case "2":
