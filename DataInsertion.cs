@@ -16,11 +16,7 @@ public class DataInsertion
 
         await using var db = NpgsqlDataSource.Create(dbUri);
 
-
-
-        
-        
-                await using (var cmd = db.CreateCommand(@"
+            await using (var cmd = db.CreateCommand(@"
             INSERT INTO hotel (name, distance_to_beach, distance_to_centrum) VALUES
             ('Seaside Paradise', 50, 5),
             ('City Center Oasis', 20, 0),
