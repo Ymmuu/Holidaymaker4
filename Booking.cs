@@ -9,11 +9,11 @@ using System.Text.RegularExpressions;
 namespace idcgrupp4;
 
 public class Booking
-{ 
+{
     public DateOnly CheckDate()
     {
         string choosenDate = Console.ReadLine();
-        DateOnly choosenDateCorrected;   
+        DateOnly choosenDateCorrected;
         while (!DateOnly.TryParseExact(choosenDate, "yyyy-mm-dd",
                                                         CultureInfo.InvariantCulture,
                                                         DateTimeStyles.None,
@@ -24,8 +24,8 @@ public class Booking
         }
         return choosenDateCorrected;
     }
-        
-public async Task AddCustomer()
+
+    public async Task AddCustomer()
     {
         string dbUri = "Host=localhost;Port=5455;Username=postgres;Password=postgres;Database=idcgrupp4";
 
@@ -66,7 +66,7 @@ public async Task AddCustomer()
         Console.WriteLine("Write your date of birth (YYYY-MM-DD): ");
         //call function tryparse date
         DateOnly dateOfBirth = CheckDate();
-        
+
 
         Console.Clear();
         Console.WriteLine("Added " + firstName + " " + lastName + " as a customer, welcome!");
@@ -110,7 +110,16 @@ public async Task AddCustomer()
             amountOfPeopleString = Console.ReadLine();
         }
 
-        
+        Console.WriteLine("What room number to do you want?");
+        int roomNumber;
+        string roomNumberString = Console.ReadLine();
+        while (!int.TryParse(roomNumberString, out roomNumber))
+        {
+            Console.WriteLine("Invalid format");
+            roomNumberString = Console.ReadLine();
+        }
+
+
         Console.WriteLine("Add extra ameneties?");
         Console.WriteLine("1. Yes");
         Console.WriteLine("2. No");
@@ -174,21 +183,17 @@ public async Task AddCustomer()
             case "2":
                 break;
         }
-/*
-        string LastestCustomer = "INSERT INTO booking(customer) SELECT MAX(ID) FROM Customer";
-        await using (var cmd = db.CreateCommand(LastestCustomer))
-        {
-            await cmd.ExecuteNonQueryAsync();
-        }
-        Console.WriteLine(checkIn);
-        Console.WriteLine(checkOut);
-        Console.WriteLine(amountOfPeople);
-        Console.WriteLine(extras);
-*/
-
-
-
-
+        /*
+                string LastestCustomer = "INSERT INTO booking(customer) SELECT MAX(ID) FROM Customer";
+                await using (var cmd = db.CreateCommand(LastestCustomer))
+                {
+                    await cmd.ExecuteNonQueryAsync();
+                }
+                Console.WriteLine(checkIn);
+                Console.WriteLine(checkOut);
+                Console.WriteLine(amountOfPeople);
+                Console.WriteLine(extras);
+        */
         string result = string.Empty;
 
         const string query = "SELECT MAX(ID) FROM Customer";
@@ -197,24 +202,21 @@ public async Task AddCustomer()
         while (await reader.ReadAsync())
         {
             result += reader.GetInt32(0);
-            
+
         }
         int latest = int.Parse(result);
 
-
-
-
-        string insertQuery = "INSERT INTO booking(customer, check_in, check_out, amount_of_people, extra_amenities, is_deleted) VALUES ($1, $2, $3, $4, $5, $6)";
+        string insertQuery = "INSERT INTO booking(customer, room_number, check_in, check_out, amount_of_people, extra_amenities, is_deleted) VALUES ($1, $2, $3, $4, $5, $6, $7)";
 
         await using (var cmd = db.CreateCommand(insertQuery))
         {
             cmd.Parameters.AddWithValue(latest);
+            cmd.Parameters.AddWithValue(roomNumber);
             cmd.Parameters.AddWithValue(checkIn);
             cmd.Parameters.AddWithValue(checkOut);
             cmd.Parameters.AddWithValue(amountOfPeople);
             cmd.Parameters.AddWithValue(extras);
             cmd.Parameters.AddWithValue(false);
-            
 
             await cmd.ExecuteNonQueryAsync();
         }
@@ -222,7 +224,4 @@ public async Task AddCustomer()
     }
 
 
-    }
-
-
-
+}

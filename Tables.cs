@@ -16,41 +16,39 @@ public class Table
 
         await using var db = NpgsqlDataSource.Create(dbUri);
 
+        /*
+         // Drop the tables with CASCADE
+         await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS room CASCADE"))
+         {
+             await cmd.ExecuteNonQueryAsync();
+         }
 
-        
-       /*
-        // Drop the tables with CASCADE
-        await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS room CASCADE"))
-        {
-            await cmd.ExecuteNonQueryAsync();
-        }
+         await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS booking CASCADE"))
+         {
+             await cmd.ExecuteNonQueryAsync();
+         }
 
-        await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS booking CASCADE"))
-        {
-            await cmd.ExecuteNonQueryAsync();
-        }
+         await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS customer CASCADE"))
+         {
+             await cmd.ExecuteNonQueryAsync();
+         }
 
-        await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS customer CASCADE"))
-        {
-            await cmd.ExecuteNonQueryAsync();
-        }
+         await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS hotels_to_addons CASCADE"))
+         {
+             await cmd.ExecuteNonQueryAsync();
+         }
 
-        await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS hotels_to_addons CASCADE"))
-        {
-            await cmd.ExecuteNonQueryAsync();
-        }
+         await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS addons CASCADE"))
+         {
+             await cmd.ExecuteNonQueryAsync();
+         }
 
-        await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS addons CASCADE"))
-        {
-            await cmd.ExecuteNonQueryAsync();
-        }
+         await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS hotel CASCADE"))
+         {
+             await cmd.ExecuteNonQueryAsync();
+         }
 
-        await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS hotel CASCADE"))
-        {
-            await cmd.ExecuteNonQueryAsync();
-        }
-        
-        */
+         */
 
         await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS customer (id SERIAL PRIMARY KEY, name VARCHAR, surname VARCHAR, email VARCHAR, phone_number VARCHAR, date_of_birth DATE)"))
         {
@@ -58,7 +56,7 @@ public class Table
         }
 
 
-        await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS booking (id SERIAL PRIMARY KEY, customer INT references customer(id), check_in DATE, check_out DATE, amount_of_people INT, extra_amenities TEXT, is_deleted BOOL)"))
+        await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS booking (id SERIAL PRIMARY KEY, room_number INT, customer INT references customer(id), check_in DATE, check_out DATE, amount_of_people INT, extra_amenities TEXT, is_deleted BOOL)"))
         {
             await cmd.ExecuteNonQueryAsync();
         }
@@ -87,6 +85,12 @@ public class Table
         {
             await cmd.ExecuteNonQueryAsync();
         }
+
+        await using (var cmd = db.CreateCommand("ALTER TABLE booking ADD CONSTRAINT fk_booking_room FOREIGN KEY (booking_id) REFERENCES booking(id) "))
+        {
+            await cmd.ExecuteNonQueryAsync();
+        }
+
         await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS addon (id SERIAL PRIMARY KEY, label TEXT UNIQUE)"))
         {
             await cmd.ExecuteNonQueryAsync();
