@@ -62,8 +62,6 @@ public async Task AddCustomer()
             phoneNumber = Console.ReadLine();
         }
 
-
-
         Console.Clear();
         Console.WriteLine("Write your date of birth (YYYY-MM-DD): ");
         //call function tryparse date
@@ -71,11 +69,8 @@ public async Task AddCustomer()
         
 
         Console.Clear();
-
-        
-
-
         Console.WriteLine("Added " + firstName + " " + lastName + " as a customer, welcome!");
+        Console.ReadKey();
 
         string insertQuery = "INSERT INTO customer(name, surname, email, phone_number, date_of_birth) VALUES ($1, $2, $3, $4, $5)";
 
@@ -89,14 +84,8 @@ public async Task AddCustomer()
 
             await cmd.ExecuteNonQueryAsync();
         }
-
-        
-
-
     }
 
-
-    
     public async Task AddBooking()
     {
         string dbUri = "Host =localhost;Port=5455;Username=postgres;Password=postgres;Database=idcgrupp4";
@@ -135,12 +124,12 @@ public async Task AddCustomer()
                 {
                     Console.Clear();
                     Console.WriteLine("1. Pool");
-                    Console.WriteLine("2. Kvällsunderhållning");
-                    Console.WriteLine("3. Barnklubb");
-                    Console.WriteLine("4. Restaurang");
-                    Console.WriteLine("5. Extrasäng");
-                    Console.WriteLine("6. Halvpension");
-                    Console.WriteLine("7. Helpension");
+                    Console.WriteLine("2. Evening entertainment");
+                    Console.WriteLine("3. Children's club");
+                    Console.WriteLine("4. Restaurant");
+                    Console.WriteLine("5. Extra bed");
+                    Console.WriteLine("6. Half pension");
+                    Console.WriteLine("7. Full pension");
                     Console.WriteLine("8. Klar");
                     string amenetieChoice = Console.ReadLine();
                     // if time make so just 1 extra dosent have ,
@@ -151,27 +140,27 @@ public async Task AddCustomer()
                             break;
 
                         case "2":
-                            extras += "Kvällsunderhållning, ";
+                            extras += "Evening entertainment, ";
                             break;
 
                         case "3":
-                            extras += "Barnklubb, ";
+                            extras += "Children's club, ";
                             break;
 
                         case "4":
-                            extras += "Restaurang, ";
+                            extras += "Restaurant, ";
                             break;
 
                         case "5":
-                            extras += "Extrasäng, ";
+                            extras += "Extra bed, ";
                             break;
 
                         case "6":
-                            extras += "Halvpension, ";
+                            extras += "Half pension, ";
                             break;
 
                         case "7":
-                            extras += "Helpension";
+                            extras += "Full pension";
                             break;
 
                         case "8":
