@@ -33,13 +33,14 @@ while (menu)
 
             break;
         case "2":
+            Booking booking1 = new Booking();
+            booking1.RemoveBooking();
+            break;
+        case "3":
             Console.WriteLine("Search hotels");
             Addon addons = new Addon();
             addons.CreateView();
             Console.ReadKey();
-            break;
-        case "3":
-            Console.WriteLine("Alter booking");
             break;
         case "4":
             Console.Clear();
