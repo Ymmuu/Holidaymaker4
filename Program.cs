@@ -3,11 +3,8 @@ using Npgsql;
 using System.Threading.Channels;
 
 bool menu = true;
-
-
 Table create = new Table();
 create.CreateTable();
-
 
 while (menu)
 {
@@ -34,11 +31,9 @@ while (menu)
             Console.Clear();
             Console.WriteLine("Bye :)");
             menu = false;
-
             break;
         default:
             Console.WriteLine("Invalid choice");
             break;
     }
-
 }

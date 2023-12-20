@@ -16,7 +16,7 @@ public class Booking
     {
         string choosenDate = Console.ReadLine();
         DateOnly choosenDateCorrected;
-        while (!DateOnly.TryParseExact(choosenDate, "yyyy-mm-dd",
+        while (!DateOnly.TryParseExact(choosenDate, "yyyy-MM-dd",
                                                         CultureInfo.InvariantCulture,
                                                         DateTimeStyles.None,
                                                         out choosenDateCorrected))
@@ -68,6 +68,8 @@ public class Booking
         Console.WriteLine("Write your date of birth (YYYY-MM-DD): ");
        
         DateOnly dateOfBirth = CheckDate();
+        Console.WriteLine(dateOfBirth);
+        Console.ReadKey();
         Console.Clear();
 
         Console.WriteLine("Added " + firstName + " " + lastName + " as a customer, welcome!");
@@ -95,10 +97,11 @@ public class Booking
         Console.Clear();
         Console.WriteLine("What date do you want to check in?");
         DateOnly checkIn = CheckDate();
-
         Console.Clear();
+
         Console.WriteLine("What date do you want to check out?");
         DateOnly checkOut = CheckDate();
+        Console.Clear();
 
         Console.WriteLine("How many people are looking to rent a room?");
         int amountOfPeople;
@@ -126,16 +129,17 @@ public class Booking
             Console.WriteLine("Invalid format");
             hotelNumberString = Console.ReadLine();
         }
+        Console.Clear();
 
-        const string roomReader = "SELECT number, size FROM room WHERE available = true AND hotel_id = $1;";
-        var command = db.CreateCommand(roomReader);
+        const string roomQuery = "SELECT number, size FROM room WHERE available = true AND hotel_id = $1;";
+        var command = db.CreateCommand(roomQuery);
         command.Parameters.AddWithValue(hotelNumber);
 
-        var RoomReader = await command.ExecuteReaderAsync();
-        Console.WriteLine("Hotel Number | Room Size");
-        while (await RoomReader.ReadAsync())
+        var roomReader = await command.ExecuteReaderAsync();
+        Console.WriteLine("Room Number | Room Size");
+        while (await roomReader.ReadAsync())
         {
-            Console.WriteLine($"{RoomReader.GetInt32(0)} | {RoomReader.GetString(1)}");
+            Console.WriteLine($"{roomReader.GetInt32(0)} | {roomReader.GetString(1)}");
         }
 
         Console.WriteLine("What room number to do you want?");
@@ -202,7 +206,7 @@ public class Booking
             case "2":
                 break;
         }
-
+        Console.Clear();
         string result = string.Empty;
 
         const string query = "SELECT MAX(ID) FROM Customer";
