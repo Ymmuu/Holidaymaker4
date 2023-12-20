@@ -68,8 +68,6 @@ public class Booking
         Console.WriteLine("Write your date of birth (YYYY-MM-DD): ");
        
         DateOnly dateOfBirth = CheckDate();
-        Console.WriteLine(dateOfBirth);
-        Console.ReadKey();
         Console.Clear();
 
         Console.WriteLine("Added " + firstName + " " + lastName + " as a customer, welcome!");
@@ -151,6 +149,7 @@ public class Booking
             Console.WriteLine("Invalid format");
             roomNumberString = Console.ReadLine();
         }
+        Console.Clear();
 
         Console.WriteLine("Add extra ameneties?");
         Console.WriteLine("1. Yes");
@@ -209,8 +208,8 @@ public class Booking
         Console.Clear();
         string result = string.Empty;
 
-        const string query = "SELECT MAX(ID) FROM Customer";
-        var reader = await db.CreateCommand(query).ExecuteReaderAsync();
+        const string latestCustomerQuery = "SELECT MAX(ID) FROM Customer";
+        var reader = await db.CreateCommand(latestCustomerQuery).ExecuteReaderAsync();
 
         while (await reader.ReadAsync())
         {
