@@ -8,18 +8,12 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class Table
 {
-
-
     public async Task CreateTable()
     {
         string dbUri = "Host=localhost;Port=5455;Username=postgres;Password=postgres;Database=idcgrupp4";
 
         await using var db = NpgsqlDataSource.Create(dbUri);
-
-       
-
         /*
-         // Drop the tables with CASCADE
          await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS room CASCADE"))
          {
              await cmd.ExecuteNonQueryAsync();
@@ -50,13 +44,10 @@ public class Table
              await cmd.ExecuteNonQueryAsync();
          }
 
-         */
-
         await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS customer (id SERIAL PRIMARY KEY, name VARCHAR, surname VARCHAR, email VARCHAR, phone_number VARCHAR, date_of_birth DATE)"))
         {
             await cmd.ExecuteNonQueryAsync();
         }
-
 
         await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS booking (id SERIAL PRIMARY KEY, hotel_id INT, room_number INT, customer INT references customer(id), check_in DATE, check_out DATE, amount_of_people INT, extra_amenities TEXT, is_deleted BOOL)"))
         {
@@ -73,15 +64,10 @@ public class Table
             await cmd.ExecuteNonQueryAsync();
         }
 
-        
-        
-
-
         await using (var cmd = db.CreateCommand("ALTER TABLE hotel ADD CONSTRAINT hotel_id UNIQUE (id)"))
         {
             await cmd.ExecuteNonQueryAsync();
         }
-
 
         await using (var cmd = db.CreateCommand("ALTER TABLE room ADD CONSTRAINT fk_room_hotel FOREIGN KEY (hotel_id) REFERENCES hotel(id)"))
         {
@@ -107,5 +93,6 @@ public class Table
         {
             await cmd.ExecuteNonQueryAsync();
         }
+        */
     }
 }

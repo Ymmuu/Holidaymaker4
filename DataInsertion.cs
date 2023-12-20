@@ -27,8 +27,6 @@ public class DataInsertion
             await cmd.ExecuteNonQueryAsync();
         };
         
-        
-        
         await using (var cmd = db.CreateCommand(@"
 INSERT INTO room (number, size, available, hotel_id) VALUES 
 (1, 'S', true, 1), (2, 'M', true, 1), (3, 'L', true, 1), 
@@ -90,18 +88,12 @@ INSERT INTO room (number, size, available, hotel_id) VALUES
 
         /*
                 await using (var cmd = db.CreateCommand(@"
-        insert into customer (id, name, surname, email, phone_number, date_of_birth) values (1, 'Ashien', 'D''Alesco', 'adalesco0@accuweather.com', '+967 (893) 162-9630', '8/19/1959');
-        insert into customer (id, name, surname, email, phone_number, date_of_birth) values (2, 'Roxane', 'Ryle', 'rryle1@tripod.com', '+86 (179) 855-6611', '9/30/2005');
-        insert into customer (id, name, surname, email, phone_number, date_of_birth) values (3, 'Alexandrina', 'Frohock', 'afrohock2@amazon.com', '+420 (471) 999-2230', '12/12/1954');
-        insert into customer (id, name, surname, email, phone_number, date_of_birth) values (4, 'Chev', 'Underwood', 'cunderwood3@shareasale.com', '+850 (298) 565-4346', '8/2/1946');
-        insert into customer (id, name, surname, email, phone_number, date_of_birth) values (5, 'Manda', 'Fearnall', 'mfearnall4@moonfruit.com', '+63 (422) 819-9737', '11/22/1960');
-        insert into customer (id, name, surname, email, phone_number, date_of_birth) values (6, 'Gena', 'Le Galle', 'glegalle5@state.tx.us', '+86 (567) 288-9269', '2/2/1986');
-        insert into customer (id, name, surname, email, phone_number, date_of_birth) values (7, 'Reeta', 'Jakoviljevic', 'rjakoviljevic6@dedecms.com', '+63 (488) 750-3674', '11/25/1989');
+                
         insert into customer (id, name, surname, email, phone_number, date_of_birth) values (8, 'Bryan', 'Worsnop', 'bworsnop7@exblog.jp', '+81 (596) 556-5125', '8/19/1979');
         insert into customer (id, name, surname, email, phone_number, date_of_birth) values (9, 'Lucky', 'Mityushin', 'lmityushin8@comsenz.com', '+86 (899) 505-3737', '11/7/1998');
         insert into customer (id, name, surname, email, phone_number, date_of_birth) values (10, 'Bryon', 'Jessop', 'bjessop9@intel.com', '+375 (733) 500-8107', '5/6/2001');
         insert into customer (id, name, surname, email, phone_number, date_of_birth) values (11, 'Chevalier', 'Averall', 'caveralla@wix.com', '+7 (472) 835-1551', '9/18/1955');
-        insert into customer (id, name, surname, email, phone_number, date_of_birth) values (12, 'Sonja', 'Hendrick', 'shendrickb@google.com', '+359 (120) 974-6230', '3/31/1970');
+        insert into customer (id, name, surname, email, phone_number, date_of_birth) values (12, 'Sonja', 'Hendrick', 'shendrickb@google.com', '+359 (120) 974-6230', '3/31/1970');alues (1, '
         insert into customer (id, name, surname, email, phone_number, date_of_birth) values (13, 'Drusilla', 'Wragg', 'dwraggc@wikia.com', '+351 (276) 399-3442', '12/9/1945');
         insert into customer (id, name, surname, email, phone_number, date_of_birth) values (14, 'Federico', 'Absalom', 'fabsalomd@github.com', '+359 (133) 813-5447', '2/24/1947');
         insert into customer (id, name, surname, email, phone_number, date_of_birth) values (15, 'Donielle', 'Roose', 'droosee@woothemes.com', '+1 (615) 750-0811', '3/10/1994');

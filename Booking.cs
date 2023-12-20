@@ -9,8 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
-namespace idcgrupp4;
-
+namespace Holidaymaker4;
 public class Booking
 {
     public DateOnly CheckDate()
@@ -33,8 +32,6 @@ public class Booking
         string dbUri = "Host=localhost;Port=5455;Username=postgres;Password=postgres;Database=idcgrupp4";
 
         await using var db = NpgsqlDataSource.Create(dbUri);
-
-
 
         Console.Clear();
         Console.WriteLine("Write first name: ");
@@ -67,24 +64,17 @@ public class Booking
             phoneNumber = Console.ReadLine();
         }
 
-
-
         Console.Clear();
         Console.WriteLine("Write your date of birth (YYYY-MM-DD): ");
-        //call function tryparse date
+       
         DateOnly dateOfBirth = CheckDate();
-
-
         Console.Clear();
-
-
-
 
         Console.WriteLine("Added " + firstName + " " + lastName + " as a customer, welcome!");
         Console.ReadKey();
 
         string insertQuery = "INSERT INTO customer(name, surname, email, phone_number, date_of_birth) VALUES ($1, $2, $3, $4, $5)";
-
+        
         await using (var cmd = db.CreateCommand(insertQuery))
         {
             cmd.Parameters.AddWithValue(firstName);
@@ -95,18 +85,11 @@ public class Booking
 
             await cmd.ExecuteNonQueryAsync();
         }
-
-
-
-
     }
-
-
 
     public async Task AddBooking()
     {
         string dbUri = "Host =localhost;Port=5455;Username=postgres;Password=postgres;Database=idcgrupp4";
-
         await using var db = NpgsqlDataSource.Create(dbUri);
 
         Console.Clear();
@@ -117,7 +100,6 @@ public class Booking
         Console.WriteLine("What date do you want to check out?");
         DateOnly checkOut = CheckDate();
 
-
         Console.WriteLine("How many people are looking to rent a room?");
         int amountOfPeople;
         string amountOfPeopleString = Console.ReadLine();
@@ -126,7 +108,6 @@ public class Booking
             Console.WriteLine("Invalid format");
             amountOfPeopleString = Console.ReadLine();
         }
-
         Console.Clear();
 
         var hotelReader = await db.CreateCommand("SELECT id, name FROM hotel").ExecuteReaderAsync();
@@ -167,7 +148,6 @@ public class Booking
             roomNumberString = Console.ReadLine();
         }
 
-
         Console.WriteLine("Add extra ameneties?");
         Console.WriteLine("1. Yes");
         Console.WriteLine("2. No");
@@ -181,53 +161,44 @@ public class Booking
                 {
                     Console.Clear();
                     Console.WriteLine("1. Pool");
-                    Console.WriteLine("2. Kvällsunderhållning");
-                    Console.WriteLine("3. Barnklubb");
-                    Console.WriteLine("4. Restaurang");
-                    Console.WriteLine("5. Extrasäng");
-                    Console.WriteLine("6. Halvpension");
-                    Console.WriteLine("7. Helpension");
-                    Console.WriteLine("8. Klar");
+                    Console.WriteLine("2. Evening entertainment");
+                    Console.WriteLine("3. Children's club");
+                    Console.WriteLine("4. Restaurant");
+                    Console.WriteLine("5. Extra bed");
+                    Console.WriteLine("6. Half pension");
+                    Console.WriteLine("7. Full pension");
+                    Console.WriteLine("8. Done");
+
                     string amenetieChoice = Console.ReadLine();
-                    // if time make so just 1 extra dosent have ,
                     switch (amenetieChoice)
                     {
                         case "1":
                             extras += "Pool, ";
                             break;
-
                         case "2":
-                            extras += "Kvällsunderhållning, ";
+                            extras += "Evening entertainment, ";
                             break;
-
                         case "3":
-                            extras += "Barnklubb, ";
+                            extras += "Children's club, ";
                             break;
-
                         case "4":
-                            extras += "Restaurang, ";
+                            extras += "Restaurant, ";
                             break;
-
                         case "5":
-                            extras += "Extrasäng, ";
+                            extras += "Extra bed, ";
                             break;
-
                         case "6":
-                            extras += "Halvpension, ";
+                            extras += "Half pension, ";
                             break;
-
                         case "7":
-                            extras += "Helpension";
+                            extras += "Full pension";
                             break;
-
                         case "8":
                             ameneties = false;
                             break;
-
                     }
                 }
                 break;
-
             case "2":
                 break;
         }
@@ -240,12 +211,8 @@ public class Booking
         while (await reader.ReadAsync())
         {
             result += reader.GetInt32(0);
-
         }
         int latest = int.Parse(result);
-
-
-
 
         string insertQuery = "INSERT INTO booking(customer, hotel_id, room_number, check_in, check_out, amount_of_people, extra_amenities, is_deleted) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
 
@@ -259,7 +226,6 @@ public class Booking
             cmd.Parameters.AddWithValue(amountOfPeople);
             cmd.Parameters.AddWithValue(extras);
             cmd.Parameters.AddWithValue(false);
-
 
             await cmd.ExecuteNonQueryAsync();
         }
@@ -294,22 +260,19 @@ public class Booking
         {
             Console.WriteLine("Invalid format");
             bookingIDString = Console.ReadLine();
-
-
-
         }
-        const string query1 = "SELECT b.ID, b.room_number, b.customer, b.check_in, b.check_out, b.amount_of_people, b.extra_amenities, c.name AS CustomerName FROM Booking b JOIN Customer c ON b.ID = c.ID WHERE b.ID = $1";
-        var command = db.CreateCommand(query1);
+        const string showBooking = "SELECT b.ID, b.room_number, b.customer, b.check_in, b.check_out, b.amount_of_people, b.extra_amenities, c.name AS CustomerName FROM Booking b JOIN Customer c ON b.ID = c.ID WHERE b.ID = $1";
+        var command = db.CreateCommand(showBooking);
         command.Parameters.AddWithValue(bookingID);
 
-        var reader2 = await command.ExecuteReaderAsync();
+        var readBooking = await command.ExecuteReaderAsync();
         Console.Clear();
         Console.WriteLine("ID    |Room Number|Customer Name|Check In Date|Check Out Date|Guests  |Extra Stuff");
-        while (await reader2.ReadAsync())
+        while (await readBooking.ReadAsync())
         {
-            string convertedDate1 = reader2.GetDateTime(3).ToShortDateString();
-            string convertedDate2 = reader2.GetDateTime(4).ToShortDateString();
-            Console.WriteLine($"{reader2.GetInt32(0),-5} | {reader2.GetInt32(1), -5} | {reader2.GetString(7),-10}  | {convertedDate1,-11} | {convertedDate2,-12} | {reader2.GetInt32(5),-6} | {reader2.GetString(6),-15}");
+            string checkInDate = readBooking.GetDateTime(3).ToShortDateString();
+            string checkOutDate = readBooking.GetDateTime(4).ToShortDateString();
+            Console.WriteLine($"{readBooking.GetInt32(0),-5} | {readBooking.GetInt32(1), -5} | {readBooking.GetString(7),-10}  | {checkInDate,-11} | {checkOutDate,-12} | {readBooking.GetInt32(5),-6} | {readBooking.GetString(6),-15}");
         }
         Console.WriteLine("Are you sure you want to delete it? Type yes then enter, otherwise leave empty.");
         var choice = Console.ReadLine();
@@ -320,7 +283,6 @@ public class Booking
                 await using (var cmd = db.CreateCommand(remove))
                 {
                     cmd.Parameters.AddWithValue(bookingID);
-                    //want to type out the ones name and say its booking was removed
                     await cmd.ExecuteNonQueryAsync();
                     Console.WriteLine("Booking was deleted. Press any button to return to main menu.");
                 }
@@ -332,6 +294,3 @@ public class Booking
         Console.Clear();
     }
 }
-
-
-

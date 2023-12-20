@@ -1,5 +1,4 @@
 ﻿using Holidaymaker4;
-using idcgrupp4;
 using Npgsql;
 using System.Threading.Channels;
 
@@ -8,9 +7,6 @@ bool menu = true;
 
 Table create = new Table();
 create.CreateTable();
-DataInsertion insertion = new DataInsertion();
-//await insertion.InsertData();
-
 
 
 while (menu)
@@ -18,8 +14,7 @@ while (menu)
     Console.WriteLine("==== Menu ====");
     Console.WriteLine("1. Add booking");
     Console.WriteLine("2. Remove booking");
-    Console.WriteLine("3. Alter booking");
-    Console.WriteLine("4. Exit");
+    Console.WriteLine("3. Exit");
     Console.WriteLine("=============");
     Console.Write("Enter your choice: ");
     string choice = Console.ReadLine();
@@ -30,19 +25,12 @@ while (menu)
             Booking booking = new Booking();
             await booking.AddCustomer();
             await booking.AddBooking();
-
             break;
         case "2":
             Booking booking1 = new Booking();
             await booking1.RemoveBooking();
             break;
         case "3":
-            Console.WriteLine("Search hotels");
-            Addon addons = new Addon();
-            await addons.CreateView();
-            Console.ReadKey();
-            break;
-        case "4":
             Console.Clear();
             Console.WriteLine("Bye :)");
             menu = false;
