@@ -16,6 +16,8 @@ public class Table
 
         await using var db = NpgsqlDataSource.Create(dbUri);
 
+       
+
         /*
          // Drop the tables with CASCADE
          await using (var cmd = db.CreateCommand("DROP TABLE IF EXISTS room CASCADE"))
@@ -56,7 +58,7 @@ public class Table
         }
 
 
-        await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS booking (id SERIAL PRIMARY KEY, room_number INT, customer INT references customer(id), check_in DATE, check_out DATE, amount_of_people INT, extra_amenities TEXT, is_deleted BOOL)"))
+        await using (var cmd = db.CreateCommand("CREATE TABLE IF NOT EXISTS booking (id SERIAL PRIMARY KEY, hotel_id INT, room_number INT, customer INT references customer(id), check_in DATE, check_out DATE, amount_of_people INT, extra_amenities TEXT, is_deleted BOOL)"))
         {
             await cmd.ExecuteNonQueryAsync();
         }
@@ -86,7 +88,12 @@ public class Table
             await cmd.ExecuteNonQueryAsync();
         }
 
-        await using (var cmd = db.CreateCommand("ALTER TABLE booking ADD CONSTRAINT fk_booking_room FOREIGN KEY (booking_id) REFERENCES booking(id) "))
+        await using (var cmd = db.CreateCommand("ALTER TABLE booking ADD CONSTRAINT fk_booking_room FOREIGN KEY (room_number) REFERENCES room(number) "))
+        {
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        await using (var cmd = db.CreateCommand("ALTER TABLE booking ADD CONSTRAINT fk_booking_hotel FOREIGN KEY (hotel_id) REFERENCES hotel(id)"))
         {
             await cmd.ExecuteNonQueryAsync();
         }
@@ -100,7 +107,5 @@ public class Table
         {
             await cmd.ExecuteNonQueryAsync();
         }
-
-
     }
 }
