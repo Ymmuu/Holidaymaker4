@@ -6,6 +6,7 @@ using System.Data;
 using System.Globalization;
 using System.Runtime;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 namespace idcgrupp4;
@@ -126,7 +127,38 @@ public class Booking
             amountOfPeopleString = Console.ReadLine();
         }
 
+        Console.Clear();
+
+        var hotelReader = await db.CreateCommand("SELECT id, name FROM hotel").ExecuteReaderAsync();
+
+        Console.WriteLine();
+        while (await hotelReader.ReadAsync())
+        {
+            Console.WriteLine($"{hotelReader.GetInt32(0)} | {hotelReader.GetString(1)}");
+        }
+        Console.WriteLine("What hotel do you want?");
+
+        int hotelNumber;
+        string hotelNumberString = Console.ReadLine();
+        while (!int.TryParse(hotelNumberString, out hotelNumber))
+        {
+            Console.WriteLine("Invalid format");
+            hotelNumberString = Console.ReadLine();
+        }
+
+        const string roomReader = "SELECT number, size FROM room WHERE available = true AND hotel_id = $1;";
+        var command = db.CreateCommand(roomReader);
+        command.Parameters.AddWithValue(hotelNumber);
+
+        var RoomReader = await command.ExecuteReaderAsync();
+        Console.WriteLine("Hotel Number | Room Size");
+        while (await RoomReader.ReadAsync())
+        {
+            Console.WriteLine($"{RoomReader.GetInt32(0)} | {RoomReader.GetString(1)}");
+        }
+
         Console.WriteLine("What room number to do you want?");
+
         int roomNumber;
         string roomNumberString = Console.ReadLine();
         while (!int.TryParse(roomNumberString, out roomNumber))
@@ -215,11 +247,13 @@ public class Booking
 
 
 
-        string insertQuery = "INSERT INTO booking(customer, check_in, check_out, amount_of_people, extra_amenities, is_deleted) VALUES ($1, $2, $3, $4, $5, $6)";
+        string insertQuery = "INSERT INTO booking(customer, hotel_id, room_number, check_in, check_out, amount_of_people, extra_amenities, is_deleted) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
 
         await using (var cmd = db.CreateCommand(insertQuery))
         {
             cmd.Parameters.AddWithValue(latest);
+            cmd.Parameters.AddWithValue(hotelNumber);
+            cmd.Parameters.AddWithValue(roomNumber);
             cmd.Parameters.AddWithValue(checkIn);
             cmd.Parameters.AddWithValue(checkOut);
             cmd.Parameters.AddWithValue(amountOfPeople);
@@ -238,15 +272,13 @@ public class Booking
         Console.WriteLine("ID    |CustomerID   |CheckIn     |CheckOut    |Guests  |Extra stuff");
         while (await reader1.ReadAsync())
         {
-            string convertedDate1 = reader1.GetDateTime(2).ToShortDateString();
-            string convertedDate2 = reader1.GetDateTime(3).ToShortDateString();
-            Console.WriteLine($"{reader1.GetInt32(0),-5} | {reader1.GetInt32(1),-11} | {convertedDate1,-10} | {convertedDate2,-10} | {reader1.GetInt32(4),-6} | {reader1.GetString(5),-15}");
+            string convertedDate1 = reader1.GetDateTime(4).ToShortDateString();
+            string convertedDate2 = reader1.GetDateTime(5).ToShortDateString();
+            Console.WriteLine($"{reader1.GetInt32(0),-5} | {reader1.GetInt32(1),-11} | {reader1.GetInt32(2),-11} | {convertedDate1,-10} | {convertedDate2,-10} | {reader1.GetInt32(6),-6} | {reader1.GetString(7),-15}");
         }
-
+        Console.WriteLine("Press any button to exit into the main menu.");
         Console.ReadKey();
-
-
-
+        Console.Clear();
     }
 
     public async Task RemoveBooking()
@@ -270,29 +302,35 @@ public class Booking
         var command = db.CreateCommand(query1);
         command.Parameters.AddWithValue(bookingID);
 
-
         var reader2 = await command.ExecuteReaderAsync();
         Console.Clear();
         Console.WriteLine("ID    |Room Number|Customer Name|Check In Date|Check Out Date|Guests  |Extra Stuff");
         while (await reader2.ReadAsync())
         {
-            string convertedDate1 = reader2.GetDateTime(2).ToShortDateString();
-            string convertedDate2 = reader2.GetDateTime(3).ToShortDateString();
-            Console.WriteLine($"{reader2.GetInt32(0),-5} | {reader2.GetInt32(1), -5} | {reader2.GetString(6),-10}  | {convertedDate1,-11} | {convertedDate2,-12} | {reader2.GetInt32(4),-6} | {reader2.GetString(5),-15}");
+            string convertedDate1 = reader2.GetDateTime(3).ToShortDateString();
+            string convertedDate2 = reader2.GetDateTime(4).ToShortDateString();
+            Console.WriteLine($"{reader2.GetInt32(0),-5} | {reader2.GetInt32(1), -5} | {reader2.GetString(7),-10}  | {convertedDate1,-11} | {convertedDate2,-12} | {reader2.GetInt32(5),-6} | {reader2.GetString(6),-15}");
         }
-
-
-
+        Console.WriteLine("Are you sure you want to delete it? Type yes then enter, otherwise leave empty.");
+        var choice = Console.ReadLine();
+        switch (choice)
+        {
+            case "yes":
+                const string remove = "UPDATE booking SET is_deleted = TRUE WHERE id = $1";
+                await using (var cmd = db.CreateCommand(remove))
+                {
+                    cmd.Parameters.AddWithValue(bookingID);
+                    //want to type out the ones name and say its booking was removed
+                    await cmd.ExecuteNonQueryAsync();
+                    Console.WriteLine("Booking was deleted. Press any button to return to main menu.");
+                }
+                break;
+            default:
+                break;
+        }
         Console.ReadKey();
-
-
-        // get booking id join with customer id to get customer name and write name to double check if correct customer wants to be deleted, if yes then delete
-
-
-
-
+        Console.Clear();
     }
-
 }
 
 

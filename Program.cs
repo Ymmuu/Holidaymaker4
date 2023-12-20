@@ -28,18 +28,18 @@ while (menu)
     {
         case "1":
             Booking booking = new Booking();
-            booking.AddCustomer();
-            booking.AddBooking();
+            await booking.AddCustomer();
+            await booking.AddBooking();
 
             break;
         case "2":
             Booking booking1 = new Booking();
-            booking1.RemoveBooking();
+            await booking1.RemoveBooking();
             break;
         case "3":
             Console.WriteLine("Search hotels");
             Addon addons = new Addon();
-            addons.CreateView();
+            await addons.CreateView();
             Console.ReadKey();
             break;
         case "4":
